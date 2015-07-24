@@ -8,12 +8,13 @@ var mouse = new THREE.Vector2(),
     offset = new THREE.Vector3(),
     INTERSECTED, SELECTED;
 
-var numPhotos = 20;
+var numPhotos = 10;
 
 init();
 animate();
 
-function addPhoto(geometry, material) {
+function addPhoto(material) {
+        var geometry = new THREE.BoxGeometry( 50, 50, 50 );
         var object = new THREE.Mesh( geometry, material );
 
         object.position.x = Math.random() * 1000 - 500;
@@ -73,11 +74,10 @@ function init() {
     scene.add( light );
 
     var texture = THREE.ImageUtils.loadTexture( 'static/photos/test.jpg' );
-    var geometry = new THREE.BoxGeometry( 40, 40, 40 );
     var material = new THREE.MeshBasicMaterial( { map: texture } );
 
     for ( var i = 0; i < numPhotos; i ++ ) {
-        addPhoto(geometry, material);
+        addPhoto(material);
     }
 
     plane = new THREE.Mesh(
@@ -251,10 +251,9 @@ function checkNumPhotos(numFiles) {
         var numFilesFormatted = pad(numFiles, 4);
         var textureFile = 'static/photos/photo_'.concat(numFilesFormatted).concat('.jpg');
         var texture = THREE.ImageUtils.loadTexture( textureFile );
-        var geometry = new THREE.BoxGeometry( 40, 40, 40 );
         var material = new THREE.MeshBasicMaterial( { map: texture } );
         
-        addPhoto(geometry, material);
+        addPhoto(material);
         console.log('added new photo');
 
         // "refresh" directory
