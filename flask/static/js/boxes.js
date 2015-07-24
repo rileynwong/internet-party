@@ -1,61 +1,19 @@
 var container, stats;
 var camera, controls, scene, renderer;
 var objects = [], plane;
+var scene = new THREE.Scene();
 
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2(),
     offset = new THREE.Vector3(),
     INTERSECTED, SELECTED;
 
-var numPhotos = 200;
+var numPhotos = 20;
 
 init();
 animate();
 
-function init() {
-
-    container = document.createElement( 'div' );
-    document.body.appendChild( container );
-
-    camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
-    camera.position.z = 1000;
-
-    controls = new THREE.TrackballControls( camera );
-    controls.rotateSpeed = 1.0;
-    controls.zoomSpeed = 1.2;
-    controls.panSpeed = 0.8;
-    controls.noZoom = false;
-    controls.noPan = false;
-    controls.staticMoving = true;
-    controls.dynamicDampingFactor = 0.3;
-
-    scene = new THREE.Scene();
-
-    scene.add( new THREE.AmbientLight( 0x505050 ) );
-
-    var light = new THREE.SpotLight( 0xffffff, 1.5 );
-    light.position.set( 0, 500, 2000 );
-    light.castShadow = true;
-
-    light.shadowCameraNear = 200;
-    light.shadowCameraFar = camera.far;
-    light.shadowCameraFov = 50;
-
-    light.shadowBias = -0.00022;
-    light.shadowDarkness = 0.5;
-
-    light.shadowMapWidth = 2048;
-    light.shadowMapHeight = 2048;
-
-    scene.add( light );
-
-    var texture = THREE.ImageUtils.loadTexture( 'photos/test.jpg' );
-    var geometry = new THREE.BoxGeometry( 40, 40, 40 );
-    var material = new THREE.MeshBasicMaterial( { map: texture } );
-    console.log(numPhotos);
-
-    for ( var i = 0; i < numPhotos; i ++ ) {
-
+function addPhoto(geometry, material) {
         var object = new THREE.Mesh( geometry, material );
 
         object.position.x = Math.random() * 1000 - 500;
@@ -76,7 +34,50 @@ function init() {
         scene.add( object );
 
         objects.push( object );
+}
 
+function init() {
+
+    container = document.createElement( 'div' );
+    document.body.appendChild( container );
+
+    camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
+    camera.position.z = 1000;
+
+    controls = new THREE.TrackballControls( camera );
+    controls.rotateSpeed = 1.0;
+    controls.zoomSpeed = 1.2;
+    controls.panSpeed = 0.8;
+    controls.noZoom = false;
+    controls.noPan = false;
+    controls.staticMoving = true;
+    controls.dynamicDampingFactor = 0.3;
+
+
+    scene.add( new THREE.AmbientLight( 0x505050 ) );
+
+    var light = new THREE.SpotLight( 0xffffff, 1.5 );
+    light.position.set( 0, 500, 2000 );
+    light.castShadow = true;
+
+    light.shadowCameraNear = 200;
+    light.shadowCameraFar = camera.far;
+    light.shadowCameraFov = 50;
+
+    light.shadowBias = -0.00022;
+    light.shadowDarkness = 0.5;
+
+    light.shadowMapWidth = 2048;
+    light.shadowMapHeight = 2048;
+
+    scene.add( light );
+
+    var texture = THREE.ImageUtils.loadTexture( 'static/photos/test.jpg' );
+    var geometry = new THREE.BoxGeometry( 40, 40, 40 );
+    var material = new THREE.MeshBasicMaterial( { map: texture } );
+
+    for ( var i = 0; i < numPhotos; i ++ ) {
+        addPhoto(geometry, material);
     }
 
     plane = new THREE.Mesh(
@@ -235,12 +236,30 @@ function render() {
     renderer.render( scene, camera );
 }
 
+function pad(num, size) {
+    var s = num+"";
+    while (s.length < size) s = "0" + s;
+    return s;
+}
+
 var numPhotos = 0;
-function checkNumPhotos() {
-    numFiles = countFiles(); 
+function checkNumPhotos(numFiles) {
+    console.log('num Photos: ' + numPhotos);
+    console.log('num files: '  + numFiles);
     if (numFiles > numPhotos) {
+        // add new box
+        var numFilesFormatted = pad(numFiles, 4);
+        var textureFile = 'static/photos/photo_'.concat(numFilesFormatted).concat('.jpg');
+        var texture = THREE.ImageUtils.loadTexture( textureFile );
+        var geometry = new THREE.BoxGeometry( 40, 40, 40 );
+        var material = new THREE.MeshBasicMaterial( { map: texture } );
+        
+        addPhoto(geometry, material);
+        console.log('added new photo');
+
         // "refresh" directory
         numPhotos = numFiles;
+        render();
     }
 }
 
@@ -248,17 +267,16 @@ console.log('finna poll');
 (function poll() {
     setTimeout(function() {
         $.ajax({
-            url: "/",
+            url: "/fileCount",
             type: "GET",
             success: function(data) {
-                console.log("polling");
-                console.log(data);
+                console.log(numPhotos);
+                numFiles = parseInt(data);
+                checkNumPhotos(numFiles);
             },
             dataType: "json",
             complete: poll,
             timeout: 2000
-        }).then(function(response) {
-            console.log('polled');
         })
     }, 5000);
 })();

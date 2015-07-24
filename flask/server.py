@@ -7,6 +7,17 @@ app = Flask(__name__)
 fileCount = 0
 
 @app.route("/", methods=['GET', 'POST'])
+def runHome():
+    global fileCount
+    fileCount = 0
+    return render_template('index.html')
+
+@app.route("/fileCount", methods=['GET', 'POST'])
+def runFileCount():
+    global fileCount
+    return str(fileCount)
+
+@app.route("/api", methods=['GET', 'POST'])
 def run():
   sms_body = request.args.get('Body')
   image_body_url = request.args.get('MediaUrl0')
@@ -19,13 +30,14 @@ def run():
   global fileCount
   fileCount += 1
   fileCountStr = str(fileCount).zfill(4)
-  fileName = "../photos/photo_" + fileCountStr + '.jpg'
+  fileName = "static/photos/photo_" + fileCountStr + '.jpg'
   with open(fileName, 'w') as f:
       f.write(image_contents)
+      print 'photo written into dir'
 
   resp = twilio.twiml.Response()
   resp.message("thanks!! hit up http://104.130.174.85")
-  render_template('index.html', fileCount=fileCount);
+  resp.fileCount = fileCount
   return str(resp)
 
 if __name__ == "__main__":
