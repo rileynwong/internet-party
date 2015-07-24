@@ -1,0 +1,5 @@
+Flask==0.10.1
+httplib2==0.9.1
+requests==2.5.3
+twilio==4.4.0
+virtualenv==1.11.6

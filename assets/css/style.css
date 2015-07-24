@@ -1,0 +1,51 @@
+body {
+	background-color : #000;
+	margin : 0px;
+	padding : 0px;
+	color : #fff;
+	overflow: hidden;
+}
+
+a {
+  color:#0078ff;
+}
+
+#instructions {
+  color: white;
+  position:absolute;
+  z-index: 1;
+  margin: 10px;
+}
+
+#scene-instructions {
+  position:absolute;
+}
+
+#player {
+  display:inline-block;
+  vertical-align: middle;
+}
+
+#ocean-button {
+  display:inline-block;
+  vertical-align: middle;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+#clouds-button {
+  display:inline-block;
+  vertical-align: middle;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+#canvas-3d {
+  position:absolute;
+  z-index: 0;
+}
+
+#clouds-container {
+  background-image: url('../img/clouds-bg.png');
+  background-color: #1e4877;
+}
