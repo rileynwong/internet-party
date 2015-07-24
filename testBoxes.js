@@ -7,6 +7,8 @@ var mouse = new THREE.Vector2(),
     offset = new THREE.Vector3(),
     INTERSECTED, SELECTED;
 
+var numPhotos = 200;
+
 init();
 animate();
 
@@ -47,11 +49,12 @@ function init() {
 
     scene.add( light );
 
-    var texture = THREE.ImageUtils.loadTexture( 'assets/img/ariadne_and_the_sea.jpg' );
+    var texture = THREE.ImageUtils.loadTexture( 'photos/test.jpg' );
     var geometry = new THREE.BoxGeometry( 40, 40, 40 );
     var material = new THREE.MeshBasicMaterial( { map: texture } );
+    console.log(numPhotos);
 
-    for ( var i = 0; i < 200; i ++ ) {
+    for ( var i = 0; i < numPhotos; i ++ ) {
 
         var object = new THREE.Mesh( geometry, material );
 
@@ -221,18 +224,41 @@ function onDocumentMouseUp( event ) {
 //
 
 function animate() {
-
     requestAnimationFrame( animate );
 
     render();
     stats.update();
-
 }
 
 function render() {
-
     controls.update();
-
     renderer.render( scene, camera );
-
 }
+
+var numPhotos = 0;
+function checkNumPhotos() {
+    numFiles = countFiles(); 
+    if (numFiles > numPhotos) {
+        // "refresh" directory
+        numPhotos = numFiles;
+    }
+}
+
+console.log('finna poll');
+(function poll() {
+    setTimeout(function() {
+        $.ajax({
+            url: "/",
+            type: "GET",
+            success: function(data) {
+                console.log("polling");
+                console.log(data);
+            },
+            dataType: "json",
+            complete: poll,
+            timeout: 2000
+        }).then(function(response) {
+            console.log('polled');
+        })
+    }, 5000);
+})();

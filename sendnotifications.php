@@ -1,5 +1,4 @@
 <?php
-require('api_keys.php');
     /* Send an SMS using Twilio. You can run this file 3 different ways:
      *
      * - Save it as sendnotifications.php and at the command line, run 
@@ -15,7 +14,11 @@ require('api_keys.php');
     // Step 1: Download the Twilio-PHP library from twilio.com/docs/libraries, 
     // and move it into the folder containing this file.
     require "twilio-php-master/Services/Twilio.php";
-
+    require "api_keys.php";
+// Step 2: set our AccountSid and AuthToken from www.twilio.com/user/account
+$AccountSid = "AC7a08e45fdc82a897753058314a687027";
+$AuthToken = "9b7cd22c616ed010a391d93d8c37df18";
+    
     // Step 3: instantiate a new Twilio Rest Client
     $client = new Services_Twilio($AccountSid, $AuthToken);
 
