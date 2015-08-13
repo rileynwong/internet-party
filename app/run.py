@@ -3,9 +3,26 @@ import requests
 import twilio.twiml
 import os
 
-app = Flask(__name__)
-fileCount = 0
+isfile = os.path.isfile
+join = os.path.join
 
+# Helpers
+def getNumFiles(path):
+
+    # Counts the number of files in a directory
+    count = 0;
+    for f in os.listdir(path):
+        if isfile(join(path, f)):
+            count += 1
+
+    print str(count) + ' photos inside ' + path
+    return count
+
+app = Flask(__name__)
+path = 'static/photos'
+fileCount = getNumFiles(path)
+
+# Routes
 @app.route("/", methods=['GET', 'POST'])
 def runDef():
     return render_template('index.html')
@@ -51,11 +68,3 @@ if __name__ == "__main__":
     # Bind to PORT if defined, otherwise default to 5000
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
-
-isfile = os.path.isfile
-join = os.path.join
-
-def getNumFiles():
-    directory = '../photos'
-    number_of_files = sum(1 for item in os.listdir(directory) if isfile(join(directory, item)))
-    return number_of_files

@@ -1,4 +1,4 @@
-var container, stats;
+var container;
 var camera, controls, scene, renderer;
 var objects = [], plane;
 var scene = new THREE.Scene();
@@ -8,7 +8,9 @@ var mouse = new THREE.Vector2(),
     offset = new THREE.Vector3(),
     INTERSECTED, SELECTED;
 
-var numPhotos = 10;
+var numFillerPhotos = 10;
+var numPhotos = 0;
+var numFiles = 0;
 
 init();
 animate();
@@ -73,12 +75,8 @@ function init() {
 
     scene.add( light );
 
-    var texture = THREE.ImageUtils.loadTexture( 'static/photos/test.jpg' );
-    var material = new THREE.MeshBasicMaterial( { map: texture } );
-
-    for ( var i = 0; i < numPhotos; i ++ ) {
-        addPhoto(material);
-    }
+    addFillerBoxes();
+    addExistingBoxes();
 
     plane = new THREE.Mesh(
             new THREE.PlaneBufferGeometry( 2000, 2000, 8, 8 ),
@@ -98,19 +96,6 @@ function init() {
 
     container.appendChild( renderer.domElement );
 
-    var info = document.createElement( 'div' );
-    info.style.position = 'absolute';
-    info.style.top = '10px';
-    info.style.width = '100%';
-    info.style.textAlign = 'center';
-    info.innerHTML = '<a href="http://threejs.org" target="_blank">three.js</a> webgl - draggable cubes';
-    container.appendChild( info );
-
-    stats = new Stats();
-    stats.domElement.style.position = 'absolute';
-    stats.domElement.style.top = '0px';
-    container.appendChild( stats.domElement );
-
     renderer.domElement.addEventListener( 'mousemove', onDocumentMouseMove, false );
     renderer.domElement.addEventListener( 'mousedown', onDocumentMouseDown, false );
     renderer.domElement.addEventListener( 'mouseup', onDocumentMouseUp, false );
@@ -118,7 +103,6 @@ function init() {
     //
 
     window.addEventListener( 'resize', onWindowResize, false );
-
 }
 
 function onWindowResize() {
@@ -190,7 +174,6 @@ function onDocumentMouseDown( event ) {
     var intersects = raycaster.intersectObjects( objects );
 
     if ( intersects.length > 0 ) {
-
         controls.enabled = false;
 
         SELECTED = intersects[ 0 ].object;
@@ -199,26 +182,30 @@ function onDocumentMouseDown( event ) {
         offset.copy( intersects[ 0 ].point ).sub( plane.position );
 
         container.style.cursor = 'move';
-
     }
-
 }
 
 function onDocumentMouseUp( event ) {
-
     event.preventDefault();
-
     controls.enabled = true;
-
     if ( INTERSECTED ) {
-
         plane.position.copy( INTERSECTED.position );
-
         SELECTED = null;
-
     }
-
     container.style.cursor = 'auto';
+}
+
+function addFillerBoxes() {
+    // add some filler boxes
+    var texture = THREE.ImageUtils.loadTexture( 'static/assets/filler.jpg' );
+    var material = new THREE.MeshBasicMaterial( { map: texture } );
+
+    for ( var i = 0; i < numFillerPhotos; i++ ) {
+        addPhoto(material);
+    }
+}
+
+function addExistingBoxes() {
 
 }
 
@@ -226,9 +213,7 @@ function onDocumentMouseUp( event ) {
 
 function animate() {
     requestAnimationFrame( animate );
-
     render();
-    stats.update();
 }
 
 function render() {
@@ -242,10 +227,11 @@ function pad(num, size) {
     return s;
 }
 
-var numPhotos = 0;
 function checkNumPhotos(numFiles) {
-    console.log('num Photos: ' + numPhotos);
+    console.log('num photos: ' + numPhotos);
     console.log('num files: '  + numFiles);
+
+    // if new photo has been sent to Twilio and added to our directory
     if (numFiles > numPhotos) {
         // add new box
         var numFilesFormatted = pad(numFiles, 4);
@@ -262,7 +248,7 @@ function checkNumPhotos(numFiles) {
     }
 }
 
-console.log('finna poll');
+console.log('polling server...');
 (function poll() {
     setTimeout(function() {
         $.ajax({
