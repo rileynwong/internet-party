@@ -48,8 +48,8 @@ def run():
   return str(resp)
 
 if __name__ == "__main__":
-    #app.run(debug=True, host='0.0.0.0')
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
+    #app.run(debug=True)
 
 isfile = os.path.isfile
 join = os.path.join
