@@ -6,6 +6,10 @@ import os
 app = Flask(__name__)
 fileCount = 0
 
+@app.route("/", methods=['GET', 'POST'])
+def runDef():
+    return render_template('index.html')
+
 @app.route("/internetparty", methods=['GET', 'POST'])
 def runHome():
     global fileCount
