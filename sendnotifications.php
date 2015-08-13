@@ -46,7 +46,7 @@ $AuthToken = "9b7cd22c616ed010a391d93d8c37df18";
             // the sms body
             "Hey $name, Monkey Party at 6PM. Bring Bananas!",
 
-            array("https://demo.twilio.com/owl.png", "https://demo.twilio.com/logo.png")
+            array("http://www.shyamswaad.com/data/GFB_13_SCA10AMERBTY_CH1837_W1_SQ.jpg")
         );
 
         // Display a confirmation message on the screen

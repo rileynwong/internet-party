@@ -6,7 +6,7 @@ import os
 app = Flask(__name__)
 fileCount = 0
 
-@app.route("/", methods=['GET', 'POST'])
+@app.route("/internetparty", methods=['GET', 'POST'])
 def runHome():
     global fileCount
     fileCount = 0
@@ -16,6 +16,10 @@ def runHome():
 def runFileCount():
     global fileCount
     return str(fileCount)
+
+@app.route("/happybirthdaysophie", methods=['GET', 'POST'])
+def runBirthday():
+    return render_template('birthday.html')
 
 @app.route("/api", methods=['GET', 'POST'])
 def run():
@@ -36,8 +40,7 @@ def run():
       print 'photo written into dir'
 
   resp = twilio.twiml.Response()
-  resp.message("thanks!! hit up http://104.130.174.85")
-  resp.fileCount = fileCount
+  resp.message("thanks!! hit up http://d6a87382.ngrok.io/internetparty")
   return str(resp)
 
 if __name__ == "__main__":
