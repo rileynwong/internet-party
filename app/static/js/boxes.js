@@ -261,6 +261,8 @@ function get_signed_request(filename) {
         }
         else{
             alert("Could not get signed URL.");
+            var response = JSON.parse(xhr.responseText);
+            console.log(response);
         } 
     };
     xhr.send();
