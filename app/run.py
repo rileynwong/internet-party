@@ -19,7 +19,8 @@ def getNumFiles(path):
     return count
 
 app = Flask(__name__)
-path = 'static/photos'
+path = app.static_folder + '/photos'
+print path
 fileCount = getNumFiles(path)
 
 # Routes
