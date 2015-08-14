@@ -25,13 +25,11 @@ fileCount = getNumFiles(path)
 
 # Routes
 @app.route("/", methods=['GET', 'POST'])
-def runDef():
+def runDefault():
     return render_template('index.html')
 
-@app.route("/internetparty", methods=['GET', 'POST'])
+@app.route("/party", methods=['GET', 'POST'])
 def runHome():
-    global fileCount
-    fileCount = 0
     return render_template('index.html')
 
 @app.route("/fileCount", methods=['GET', 'POST'])
