@@ -8,9 +8,9 @@ var mouse = new THREE.Vector2(),
     offset = new THREE.Vector3(),
     INTERSECTED, SELECTED;
 
-var numFillerPhotos = 10;
-var numPhotos = 0;
-var numFiles = 0;
+var numFillerPhotos = 10; // number of filler boxes to begin with
+var numPhotos = 0;        // number of non-filler boxes
+var numFiles = 0;         // number of files in photos directory
 
 init();
 animate();
@@ -75,9 +75,6 @@ function init() {
 
     scene.add( light );
 
-    addFillerBoxes();
-    addExistingBoxes();
-
     plane = new THREE.Mesh(
             new THREE.PlaneBufferGeometry( 2000, 2000, 8, 8 ),
             new THREE.MeshBasicMaterial( { color: 0x000000, opacity: 0.25, transparent: true } )
@@ -100,7 +97,9 @@ function init() {
     renderer.domElement.addEventListener( 'mousedown', onDocumentMouseDown, false );
     renderer.domElement.addEventListener( 'mouseup', onDocumentMouseUp, false );
 
-    //
+    // Picture boxes
+    addFillerBoxes();
+    addExistingBoxesFromServer();
 
     window.addEventListener( 'resize', onWindowResize, false );
 }
@@ -206,7 +205,21 @@ function addFillerBoxes() {
 }
 
 function addExistingBoxes() {
+    var numFilesFormatted, textureFile, texture, material;
+    
+    for ( var i = 1; i <= numFiles; i++ ) {
+        // add new box
+        numFilesFormatted = pad(i, 4);
+        textureFile = 'static/photos/photo_'.concat(numFilesFormatted).concat('.jpg');
+        texture = THREE.ImageUtils.loadTexture( textureFile );
+        material = new THREE.MeshBasicMaterial( { map: texture } );
+        
+        addPhoto(material);
+        console.log('added existing photo: ' + i);
 
+        // "refresh" directory
+        numPhotos = numFiles;
+    }
 }
 
 //
@@ -248,8 +261,25 @@ function checkNumPhotos(numFiles) {
     }
 }
 
+// Get number of existing photos from server, set variable
+function addExistingBoxesFromServer() {
+    setTimeout(function() {
+        $.ajax({
+            url: "/fileCount",
+            type: "GET",
+            success: function(data) {
+                console.log('Num photos init: ' + data);
+                numFiles = parseInt(data);
+                addExistingBoxes();
+            },
+            dataType: "json",
+            timeout: 2000
+        })
+    }, 10);
+};
+
 console.log('polling server...');
-(function poll() {
+function poll() {
     setTimeout(function() {
         $.ajax({
             url: "/fileCount",
@@ -264,4 +294,5 @@ console.log('polling server...');
             timeout: 2000
         })
     }, 5000);
-})();
+};
+poll();
