@@ -241,11 +241,11 @@ function pad(num, size) {
 }
 
 function checkNumPhotos(numFiles) {
-    console.log('num photos: ' + numPhotos);
-    console.log('num files: '  + numFiles);
 
     // if new photo has been sent to Twilio and added to our directory
     if (numFiles > numPhotos) {
+        console.log('adding new photo...');
+
         // add new box
         var numFilesFormatted = pad(numFiles, 4);
         var textureFile = 'static/photos/photo_'.concat(numFilesFormatted).concat('.jpg');
@@ -253,7 +253,7 @@ function checkNumPhotos(numFiles) {
         var material = new THREE.MeshBasicMaterial( { map: texture } );
         
         addPhoto(material);
-        console.log('added new photo');
+        console.log('new photo added');
 
         // "refresh" directory
         numPhotos = numFiles;
@@ -285,7 +285,6 @@ function poll() {
             url: "/fileCount",
             type: "GET",
             success: function(data) {
-                console.log(numPhotos);
                 numFiles = parseInt(data);
                 checkNumPhotos(numFiles);
             },
