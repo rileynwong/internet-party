@@ -12,6 +12,8 @@ var numFillerPhotos = 10; // number of filler boxes to begin with
 var numPhotos = 0;        // number of non-filler boxes
 var numFiles = 0;         // number of files in photos directory
 
+THREE.ImageUtils.crossOrigin = '';
+
 init();
 animate();
 
@@ -197,6 +199,7 @@ function onDocumentMouseUp( event ) {
 function addFillerBoxes() {
     // add some filler boxes
     var texture = THREE.ImageUtils.loadTexture( 'static/assets/filler.jpg' );
+    texture.minFilter = THREE.NearestFilter;
     var material = new THREE.MeshBasicMaterial( { map: texture } );
 
     for ( var i = 0; i < numFillerPhotos; i++ ) {
@@ -204,20 +207,23 @@ function addFillerBoxes() {
     }
 }
 
+// Serve existing photo assets from s3
 function addExistingBoxes() {
-    var numFilesFormatted, textureFile, texture, material;
+    var numFilesFormatted, textureFile, textureFileUrl, textureUrl, material;
+    var S3_BUCKET = 'party-assets';
     
     for ( var i = 1; i <= numFiles; i++ ) {
+        //TODO serve from s3
         // add new box
         numFilesFormatted = pad(i, 4);
         textureFile = 'photo_'.concat(numFilesFormatted);
-        textureFilePath = 'static/photos/'.concat(textureFile).concat('.jpg');
-
-        // upload texture file to s3
-        get_signed_request(textureFile);
+        textureFilePath = 'photos/'.concat(textureFile).concat('.jpg');
+    
+        textureUrl = 'https://party-assets.s3.amazonaws.com/' + textureFilePath;
 
         // make a box
-        texture = THREE.ImageUtils.loadTexture( textureFilePath );
+        texture = THREE.ImageUtils.loadTexture( textureUrl );
+        texture.minFilter = THREE.NearestFilter;
         material = new THREE.MeshBasicMaterial( { map: texture } );
         
         addPhoto(material);
@@ -238,15 +244,16 @@ function upload_file(file, signed_request, url){
             console.log('photo uploaded to s3');
         }
     };
-    xhr.onerror = function() {
-        alert("Could not upload file.");
+    xhr.onerror = function(err) {
+        console.log("Could not upload file.");
+        console.log(err);
     };
     xhr.send(file);
 }
 
 function get_signed_request(filename) {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/sign_s3?file_name="+filename+"&file_type=jpeg");
+    xhr.open("GET", "/sign_s3?file_name=photos/"+filename+"&file_type=jpeg");
     xhr.onreadystatechange = function() {
         if(xhr.status === 200){
             var response = JSON.parse(xhr.responseText);
