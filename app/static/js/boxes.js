@@ -291,7 +291,7 @@ function checkNumPhotos(numFiles) {
         console.log('adding new photo...');
 
         // add new box
-        numFilesFormatted = pad(i, 4);
+        numFilesFormatted = pad(numFiles, 4);
         textureFile = 'photo_'.concat(numFilesFormatted).concat('jpg');
         textureFilePath = 'static/photos/'.concat(textureFile);
 
