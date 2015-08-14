@@ -46,7 +46,8 @@ def run():
   sms_body = request.args.get('Body')
   image_body_url = request.args.get('MediaUrl0')
   print image_body_url
-#save image
+
+  # Save image
   r = requests.get(image_body_url)
   print r.status_code
   image_contents = r.content
@@ -54,13 +55,16 @@ def run():
   global fileCount
   fileCount += 1
   fileCountStr = str(fileCount).zfill(4)
-  fileName = "static/photos/photo_" + fileCountStr + '.jpg'
+  fileName = app.static_folder + '/photos/photo_' + fileCountStr + '.jpg'
+
+  # Write image to file
   with open(fileName, 'w') as f:
       f.write(image_contents)
       print 'photo written into dir'
 
+  # Send SMS reply
   resp = twilio.twiml.Response()
-  resp.message("thanks!! hit up http://d6a87382.ngrok.io/internetparty")
+  resp.message("thanks!! https://internet-party.herokuapp.com")
   return str(resp)
 
 if __name__ == "__main__":
