@@ -253,7 +253,7 @@ function upload_file(file, signed_request, url){
 
 function get_signed_request(filename) {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/sign_s3?file_name=photos/"+filename+"&file_type=jpeg");
+    xhr.open("GET", "/sign_s3?file_name="+filename+"&file_type=jpeg");
     xhr.onreadystatechange = function() {
         if(xhr.status === 200){
             var response = JSON.parse(xhr.responseText);
@@ -296,7 +296,7 @@ function checkNumPhotos(numFiles) {
         textureFilePath = 'static/photos/'.concat(textureFile);
 
         // upload texture file to s3
-        get_signed_request(textureFile);
+        get_signed_request('photos/' + textureFile);
 
         var texture = THREE.ImageUtils.loadTexture( textureFilePath );
         var material = new THREE.MeshBasicMaterial( { map: texture } );
