@@ -210,8 +210,14 @@ function addExistingBoxes() {
     for ( var i = 1; i <= numFiles; i++ ) {
         // add new box
         numFilesFormatted = pad(i, 4);
-        textureFile = 'static/photos/photo_'.concat(numFilesFormatted).concat('.jpg');
-        texture = THREE.ImageUtils.loadTexture( textureFile );
+        textureFile = 'photo_'.concat(numFilesFormatted);
+        textureFilePath = 'static/photos/'.concat(textureFile).concat('.jpg');
+
+        // upload texture file to s3
+        get_signed_request(textureFile);
+
+        // make a box
+        texture = THREE.ImageUtils.loadTexture( textureFilePath );
         material = new THREE.MeshBasicMaterial( { map: texture } );
         
         addPhoto(material);
@@ -220,6 +226,37 @@ function addExistingBoxes() {
         // "refresh" directory
         numPhotos = numFiles;
     }
+}
+
+// Uploading and downloading from S3
+function upload_file(file, signed_request, url){
+    var xhr = new XMLHttpRequest();
+    xhr.open("PUT", signed_request);
+    xhr.setRequestHeader('x-amz-acl', 'public-read');
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            console.log('photo uploaded to s3');
+        }
+    };
+    xhr.onerror = function() {
+        alert("Could not upload file.");
+    };
+    xhr.send(file);
+}
+
+function get_signed_request(filename) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/sign_s3?file_name="+filename+"&file_type=jpeg");
+    xhr.onreadystatechange = function() {
+        if(xhr.status === 200){
+            var response = JSON.parse(xhr.responseText);
+            upload_file(file, response.signed_request, response.url);
+        }
+        else{
+            alert("Could not get signed URL.");
+        } 
+    };
+    xhr.send();
 }
 
 //
@@ -247,9 +284,14 @@ function checkNumPhotos(numFiles) {
         console.log('adding new photo...');
 
         // add new box
-        var numFilesFormatted = pad(numFiles, 4);
-        var textureFile = 'static/photos/photo_'.concat(numFilesFormatted).concat('.jpg');
-        var texture = THREE.ImageUtils.loadTexture( textureFile );
+        numFilesFormatted = pad(i, 4);
+        textureFile = 'photo_'.concat(numFilesFormatted).concat('jpg');
+        textureFilePath = 'static/photos/'.concat(textureFile);
+
+        // upload texture file to s3
+        get_signed_request(textureFile);
+
+        var texture = THREE.ImageUtils.loadTexture( textureFilePath );
         var material = new THREE.MeshBasicMaterial( { map: texture } );
         
         addPhoto(material);

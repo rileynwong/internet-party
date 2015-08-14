@@ -41,6 +41,31 @@ def runFileCount():
 def runBirthday():
     return render_template('birthday.html')
 
+@app.route('/sign_s3')
+def sign_s3():
+    AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY')
+    AWS_SECRET_KEY = os.environ.get('AWS_SECRET_KEY')
+    S3_BUCKET = os.environ.get('S3_BUCKET')
+
+    object_name = urllib.quote_plus(request.args.get('file_name'))
+    mime_type = request.args.get('file_type')
+
+    expires = int(time.time()+60*60*24)
+    amz_headers = "x-amz-acl:public-read"
+
+    string_to_sign = "PUT\n\n%s\n%d\n%s\n/%s/%s" % (mime_type, expires, amz_headers, S3_BUCKET, object_name)
+
+    signature = base64.encodestring(hmac.new(AWS_SECRET_KEY.encode(), string_to_sign.encode('utf8'), sha1).digest())
+    signature = urllib.quote_plus(signature.strip())
+
+    url = 'https://%s.s3.amazonaws.com/%s' % (S3_BUCKET, object_name)
+
+    content = json.dumps({
+        'signed_request': '%s?AWSAccessKeyId=%s&Expires=%s&Signature=%s' % (url, AWS_ACCESS_KEY, expires, signature),
+        'url': url,
+    })
+    return content
+
 @app.route("/api", methods=['GET', 'POST'])
 def run():
   sms_body = request.args.get('Body')
@@ -59,12 +84,14 @@ def run():
 
   # Write image to file
   with open(fileName, 'w') as f:
+      # Clear existing file contents
+      f.truncate(0);
       f.write(image_contents)
       print 'photo written into dir'
 
   # Send SMS reply
   resp = twilio.twiml.Response()
-  resp.message("thanks!! https://internet-party.herokuapp.com")
+  resp.message("thanks!! hit up https://internet-party.herokuapp.com")
   return str(resp)
 
 if __name__ == "__main__":
