@@ -83,7 +83,7 @@ function init() {
     scene.add( plane );
 
     renderer = new THREE.WebGLRenderer( { antialias: true } );
-    renderer.setClearColor( 0xf0f0f0 );
+    renderer.setClearColor( 0xd6efe7 );
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
     renderer.sortObjects = false;
