@@ -292,7 +292,7 @@ function checkNumPhotos(numFiles) {
 
         // add new box
         numFilesFormatted = pad(numFiles, 4);
-        textureFile = 'photo_'.concat(numFilesFormatted).concat('jpg');
+        textureFile = 'photo_'.concat(numFilesFormatted).concat('.jpg');
         textureFilePath = 'static/photos/'.concat(textureFile);
 
         // upload texture file to s3
