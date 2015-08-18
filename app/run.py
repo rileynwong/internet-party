@@ -97,19 +97,18 @@ def run():
         print 'Photo written into dir'
 
         # Upload file to s3
-#        s3 = boto.connect_s3()
-#        print 'connect to boto'
-#        bucket_name = 'party-assets'
-#        bucket = s3.get_bucket(bucket_name)
-#        k = Key(bucket)
-#        print 'set bucket and key vars'
-#
-#        # Use Boto to upload file to S3 bucket
-#        photo_file = f.read()
-#        print 'set photo file'
-#        k.key = fileName
-#        print 'Uploading photo into ' + bucket_name + ' with key: ' + k.key
-#        k.set_contents_from_string(photo_file)
+        bucket_name = 'party-assets'
+        s3_bucket = S3Connection().get_bucket(bucket_name)
+        print 'connect to boto'
+        k = Key(s3_bucket)
+        print 'set bucket and key vars'
+
+        # Use Boto to upload file to S3 bucket
+        photo_file = f.read()
+        print 'set photo file'
+        k.key = fileName
+        print 'Uploading photo into ' + bucket_name + ' with key: ' + k.key
+        k.set_contents_from_string(photo_file)
 
     # Send SMS reply
     resp = twilio.twiml.Response()
