@@ -88,7 +88,7 @@ def run():
     global fileCount
     fileCount += 1
     fileCountStr = str(fileCount).zfill(4)
-    fileName = '/photos/photo_' + fileCountStr + '.jpg'
+    fileName = 'photos/photo_' + fileCountStr + '.jpg'
 
     with tempfile.NamedTemporaryFile() as f:
         # Clear buffer and write image to temporary file
@@ -107,8 +107,8 @@ def run():
         photo_file = f.read()
         print 'set photo file'
         k.key = fileName
+        k.set_contents_from_string(image_contents)
         print 'Uploading photo into ' + bucket_name + ' with key: ' + k.key
-        k.set_contents_from_string(photo_file)
 
     # Send SMS reply
     resp = twilio.twiml.Response()

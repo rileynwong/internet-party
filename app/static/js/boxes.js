@@ -213,7 +213,6 @@ function addExistingBoxes() {
     var S3_BUCKET = 'party-assets';
     
     for ( var i = 1; i <= numFiles; i++ ) {
-        //TODO serve from s3
         // add new box
         numFilesFormatted = pad(i, 4);
         textureFile = 'photo_'.concat(numFilesFormatted);
@@ -290,22 +289,23 @@ function checkNumPhotos(numFiles) {
 
     // if new photo has been sent to Twilio and added to our directory
     if (numFiles > numPhotos) {
-        console.log('adding new photo...');
+        console.log('Adding new photo...');
 
         // add new box
-        numFilesFormatted = pad(numFiles, 4);
-        textureFile = 'photo_'.concat(numFilesFormatted).concat('.jpg');
-        textureFilePath = 'static/photos/'.concat(textureFile);
+        var numFilesFormatted = pad(numFiles, 4);
+        var textureFile = 'photo_'.concat(numFilesFormatted);
+        var textureFilePath = 'photos/'.concat(textureFile).concat('.jpg');
+    
+        var textureUrl = 'https://party-assets.s3.amazonaws.com/' + textureFilePath;
 
-        // upload texture file to s3
-        //get_signed_request('photos/' + textureFile);
-
-        var texture = THREE.ImageUtils.loadTexture( textureFilePath );
+        // make a box
+        var texture = THREE.ImageUtils.loadTexture( textureUrl );
+        texture.minFilter = THREE.NearestFilter;
         var material = new THREE.MeshBasicMaterial( { map: texture } );
         
         addPhoto(material);
-        console.log('new photo added');
-
+        console.log('New photo added');
+        
         // "refresh" directory
         numPhotos = numFiles;
         render();
