@@ -4,7 +4,7 @@ import requests
 import twilio.twiml
 import os, json
 import boto
-from boto.s3.key import key
+from boto.s3.key import Key
 
 isfile = os.path.isfile
 join = os.path.join
