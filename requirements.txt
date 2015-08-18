@@ -1,5 +1,9 @@
 Flask==0.10.1
-httplib2==0.9.1
+Flask-S3==0.1.7
+awscli==1.7.45
+boto==2.38.0
+boto3==1.1.1
+botocore==1.1.8
 requests==2.5.3
+requirements==0.1
 twilio==4.4.0
-virtualenv==1.11.6

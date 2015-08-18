@@ -1,5 +1,4 @@
 from flask import Flask, request, redirect, jsonify, render_template
-from flask_s3 import FlaskS3
 import requests
 import twilio.twiml
 import os, json
@@ -11,7 +10,6 @@ join = os.path.join
 
 app = Flask(__name__)
 app.config['S3_BUCKET_NAME'] = 'party-assets'
-s3 = FlaskS3(app)
 
 # Helpers
 def getNumFiles(path):
