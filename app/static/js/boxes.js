@@ -298,7 +298,7 @@ function checkNumPhotos(numFiles) {
         textureFilePath = 'static/photos/'.concat(textureFile);
 
         // upload texture file to s3
-        get_signed_request('photos/' + textureFile);
+        //get_signed_request('photos/' + textureFile);
 
         var texture = THREE.ImageUtils.loadTexture( textureFilePath );
         var material = new THREE.MeshBasicMaterial( { map: texture } );

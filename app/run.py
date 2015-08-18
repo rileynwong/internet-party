@@ -1,10 +1,17 @@
 from flask import Flask, request, redirect, jsonify, render_template
+from flask_s3 import FlaskS3
 import requests
 import twilio.twiml
 import os, json
+import boto
+from boto.s3.key import key
 
 isfile = os.path.isfile
 join = os.path.join
+
+app = Flask(__name__)
+app.config['S3_BUCKET_NAME'] = 'party-assets'
+s3 = FlaskS3(app)
 
 # Helpers
 def getNumFiles(path):
@@ -18,7 +25,6 @@ def getNumFiles(path):
     print str(count) + ' photos inside ' + path
     return count
 
-app = Flask(__name__)
 path = app.static_folder + '/photos'
 print path
 fileCount = getNumFiles(path)
@@ -82,12 +88,22 @@ def run():
   fileCountStr = str(fileCount).zfill(4)
   fileName = app.static_folder + '/photos/photo_' + fileCountStr + '.jpg'
 
-  # Write image to file
+  # Clear buffer and write image to file
   with open(fileName, 'w') as f:
-      # Clear existing file contents
-      f.truncate(0);
-      f.write(image_contents)
-      print 'photo written into dir'
+    f.truncate(0);
+    f.write(image_contents)
+    print 'photo written into dir'
+
+    # Upload file to s3
+    s3 = boto.connect_s3()
+    bucket_name = 'party-assets'
+    bucket = s3.get_bucket(bucket_name)
+    k = Key(bucket)
+
+    # Use Boto to upload file to S3 bucket
+    k.key = f.filename
+    print 'Uploading photo into ' + bucket_name + ' with key: ' + k.key
+    k.set_contents_from_string(image_contents)
 
   # Send SMS reply
   resp = twilio.twiml.Response()
