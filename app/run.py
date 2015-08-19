@@ -1,22 +1,18 @@
-from flask import Flask, request, redirect, jsonify, render_template
 import requests
 import twilio.twiml
 import tempfile
-import os, json
+import os
+import json
 import boto
+
+from flask import Flask, request, redirect, jsonify, render_template
 from boto.s3.key import Key
 from boto.s3.connection import S3Connection
 
-isfile = os.path.isfile
-join = os.path.join
 
-app = Flask(__name__)
-app.config['S3_BUCKET_NAME'] = 'party-assets'
-
-# Helpers
+### S3
+# Counts the number of files S3 bucket
 def getNumFiles():
-
-    # Counts the number of files S3 bucket
     bucket_name = 'party-assets'
     s3_bucket = S3Connection().get_bucket(bucket_name)
     count = 0
@@ -27,11 +23,34 @@ def getNumFiles():
     print str(count) + ' photos inside ' + bucket_name
     return count
 
-path = app.static_folder + '/photos'
-print path
+def upload_photo_to_s3(fileName, image_contents):
+    with tempfile.NamedTemporaryFile() as f:
+        # Clear buffer and write image to temporary file
+        print 'Writing photo into temporary file...'
+        f.truncate(0);
+        f.write(image_contents)
+
+        # Upload file to s3
+        print 'Connecting to s3...'
+        bucket_name = 'party-assets'
+        s3_bucket = S3Connection().get_bucket(bucket_name)
+        k = Key(s3_bucket)
+
+        # Use Boto to upload file to S3 bucket
+        print 'Uploading ' + fileName + ' into ' + bucket_name + '...'
+        k.key = fileName
+        k.set_contents_from_string(image_contents)
+    print 'File uploaded :^)'
+
+
+### Main
+app = Flask(__name__)
+app.config['S3_BUCKET_NAME'] = 'party-assets'
+
 fileCount = getNumFiles()
 
-# Routes
+
+### Routes
 @app.route("/", methods=['GET', 'POST'])
 def runDefault():
     return render_template('index.html')
@@ -49,71 +68,31 @@ def runFileCount():
 def runBirthday():
     return render_template('birthday.html')
 
-@app.route('/sign_s3')
-def sign_s3():
-    AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY')
-    AWS_SECRET_KEY = os.environ.get('AWS_SECRET_KEY')
-    S3_BUCKET = os.environ.get('S3_BUCKET')
-
-    object_name = urllib.quote_plus(request.args.get('file_name'))
-    mime_type = request.args.get('file_type')
-
-    expires = int(time.time()+60*60*24)
-    amz_headers = "x-amz-acl:public-read"
-
-    string_to_sign = "PUT\n\n%s\n%d\n%s\n/%s/%s" % (mime_type, expires, amz_headers, S3_BUCKET, object_name)
-
-    signature = base64.encodestring(hmac.new(AWS_SECRET_KEY.encode(), string_to_sign.encode('utf8'), sha1).digest())
-    signature = urllib.quote_plus(signature.strip())
-
-    url = 'https://%s.s3.amazonaws.com/%s' % (S3_BUCKET, object_name)
-
-    content = json.dumps({
-        'signed_request': '%s?AWSAccessKeyId=%s&Expires=%s&Signature=%s' % (url, AWS_ACCESS_KEY, expires, signature),
-        'url': url,
-        })
-    return content
-
 @app.route("/api", methods=['GET', 'POST'])
 def run():
+    # Parse request for image
     sms_body = request.args.get('Body')
     image_body_url = request.args.get('MediaUrl0')
     print image_body_url
 
-    # Save image
     r = requests.get(image_body_url)
     print r.status_code
+
     image_contents = r.content
 
+    # Save and upload image to s3
     global fileCount
     fileCount += 1
     fileCountStr = str(fileCount).zfill(4)
     fileName = 'photos/photo_' + fileCountStr + '.jpg'
 
-    with tempfile.NamedTemporaryFile() as f:
-        # Clear buffer and write image to temporary file
-        f.truncate(0);
-        f.write(image_contents)
-        print 'Photo written into dir'
-
-        # Upload file to s3
-        bucket_name = 'party-assets'
-        s3_bucket = S3Connection().get_bucket(bucket_name)
-        print 'connect to boto'
-        k = Key(s3_bucket)
-        print 'set bucket and key vars'
-
-        # Use Boto to upload file to S3 bucket
-        photo_file = f.read()
-        print 'set photo file'
-        k.key = fileName
-        k.set_contents_from_string(image_contents)
-        print 'Uploading photo into ' + bucket_name + ' with key: ' + k.key
+    upload_photo_to_s3(fileName, image_contents)
 
     # Send SMS reply
     resp = twilio.twiml.Response()
-    resp.message("thanks!! hit up https://internet-party.herokuapp.com")
+    resp.message("thanks!! come join the party :^) hit up https://internet-party.herokuapp.com")
     return str(resp)
+
 
 if __name__ == "__main__":
     # Bind to PORT if defined, otherwise default to 5000
