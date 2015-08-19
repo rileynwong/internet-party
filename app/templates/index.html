@@ -17,20 +17,28 @@
         <meta charset='utf-8'>
         <style>
             body {
-                color: #000;
+                background: #D6EFE7;
+                color: #474780;
                 font-family:Monospace;
                 font-size:13px;
                 margin: 0px;
                 text-align:center;
                 overflow: hidden;
             }
-            #info{ position: absolute; width: 100%; padding: 5px; }
+            #number {
+                display: inline;
+                color: #0000ff;
+            }
         </style>
     </head>
     <body>
-        <div id='container'></div>
-        <h2>send a picture message to <i>(706) 956-5023</i> to join the party!</h2>
+        <div id='container'>
+            <h2>send a picture message to <i id='number'>(706) 956-5023</i> to join the party!</h2>
+            <h3>click and drag boxes to move them around the scene · click and drag background to move around the scene · scroll to zoom in and out | 
+        <a href="https://github.com/nancywong/internet-party">github</a></h3>
+</div>
         <script src='/static/js/main.js'></script>
+
     </body>
 </html>
 
