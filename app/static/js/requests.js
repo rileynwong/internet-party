@@ -8,7 +8,8 @@ function getAssetUrl(fileName) {
 }
 
 function formatNameFromNumber(fileNumber) {
-    var fileName = 'photo_'.concat(fileNumber);
+    var formattedFileNumber = pad(fileNumber, 4);
+    var fileName = 'photo_'.concat(formattedFileNumber);
     return fileName;
 }
 
