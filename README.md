@@ -1,5 +1,6 @@
 # internet party: 3d picture gallery via MMS
-come play! live demo [here](https://internet-party.herokuapp.com/)
+come play! live demo [here](https://internet-party.herokuapp.com/)  
+(it is quite fun on mobile)
 
 ## usage
 text (706) 956-5023 with a picture message to upload an image to the 3d gallery
