@@ -12,28 +12,38 @@ var numFillerPhotos = 10; // number of filler boxes to begin with
 var numPhotos = 0;        // number of non-filler boxes
 var numFiles = 0;         // number of files in photos directory
 
-function addPhoto(material) {
-        var geometry = new THREE.BoxGeometry( 50, 50, 50 );
-        var object = new THREE.Mesh( geometry, material );
+function addBoxToScene(box) {
 
-        object.position.x = Math.random() * 1000 - 500;
-        object.position.y = Math.random() * 600 - 300;
-        object.position.z = Math.random() * 800 - 400;
+    box.position.x = Math.random() * 1000 - 500;
+    box.position.y = Math.random() * 600 - 300;
+    box.position.z = Math.random() * 800 - 400;
 
-        object.rotation.x = Math.random() * 2 * Math.PI;
-        object.rotation.y = Math.random() * 2 * Math.PI;
-        object.rotation.z = Math.random() * 2 * Math.PI;
+    box.rotation.x = Math.random() * 2 * Math.PI;
+    box.rotation.y = Math.random() * 2 * Math.PI;
+    box.rotation.z = Math.random() * 2 * Math.PI;
 
-        object.scale.x = Math.random() * 2 + 1;
-        object.scale.y = Math.random() * 2 + 1;
-        object.scale.z = Math.random() * 2 + 1;
+    box.scale.x = Math.random() * 2 + 1;
+    box.scale.y = Math.random() * 2 + 1;
+    box.scale.z = Math.random() * 2 + 1;
 
-        object.castShadow = true;
-        object.receiveShadow = true;
+    box.castShadow = true;
+    box.receiveShadow = true;
 
-        scene.add( object );
+    scene.add( box );
 
-        objects.push( object );
+    objects.push( box );
+}
+
+function addBoxWithTexture(texture) {
+    texture.minFilter = THREE.NearestFilter;
+    material = new THREE.MeshBasicMaterial( { map: texture } );
+    addBox(material);
+}
+
+function addBox(material) {
+    var geometry = new THREE.BoxGeometry( 50, 50, 50 );
+    var box = new THREE.Mesh( geometry, material );
+    addBoxToScene(box);
 }
 
 function init() {
@@ -108,7 +118,7 @@ function addFillerBoxes() {
     var material = new THREE.MeshBasicMaterial( { map: texture } );
 
     for ( var i = 0; i < numFillerPhotos; i++ ) {
-        addPhoto(material);
+        addBox(material);
     }
 }
 

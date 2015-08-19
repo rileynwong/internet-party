@@ -46,7 +46,7 @@ $AuthToken = "9b7cd22c616ed010a391d93d8c37df18";
             // the sms body
             "Hey $name, Monkey Party at 6PM. Bring Bananas!",
 
-            array("https://40.media.tumblr.com/tumblr_ma64xcShN01rpha9uo1_500.jpg")
+            array("http://www.wired.com/wp-content/uploads/images_blogs/insights/2012/11/clouds_660.jpg")
         );
 
         // Display a confirmation message on the screen
