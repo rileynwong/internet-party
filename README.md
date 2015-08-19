@@ -2,7 +2,7 @@
 come play! live demo [here](https://internet-party.herokuapp.com/)  
 (it is quite fun on mobile)
 
-![internet party pic](http://i.imgur.com/zboa1Ls.jpg)
+![internet party pic](http://i.imgur.com/zboa1Ls.jpg?1)
 
 ## usage
 text (706) 956-5023 with a picture message to upload an image to the 3d gallery
