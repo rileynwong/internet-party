@@ -8,8 +8,6 @@ come play! live demo [here](https://internet-party.herokuapp.com/)
 - assets served from and uploaded to Amazon Web Services S3
 - multimedia messages handled with Twilio API
 
-![internet party pic](http://i.imgur.com/zboa1Ls.jpg?1) ![internet party pic2](http://i.imgur.com/0NKhKgE.jpg)
-
 ## usage
 text (706) 956-5023 with a picture message to upload an image to the 3d gallery
 
@@ -20,3 +18,5 @@ scroll to zoom in and out
 ## pix
 ![internet party demo 1](http://i.imgur.com/tNJZWlK.png)
 ![internet party demo 2](http://i.imgur.com/NDoa6oj.png)
+![internet party pic](http://i.imgur.com/zboa1Ls.jpg?1) 
+![internet party pic2](http://i.imgur.com/0NKhKgE.jpg)
