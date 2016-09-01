@@ -2,10 +2,8 @@ import requests
 import twilio.twiml
 import tempfile
 import os
-import json
-import boto
 
-from flask import Flask, request, redirect, jsonify, render_template
+from flask import Flask, request, render_template
 from boto.s3.key import Key
 from boto.s3.connection import S3Connection
 
@@ -13,14 +11,15 @@ from boto.s3.connection import S3Connection
 ### S3
 # Counts the number of files S3 bucket
 def getNumFiles():
-    bucket_name = 'party-assets'
-    s3_bucket = S3Connection().get_bucket(bucket_name)
-    count = 0
+    # bucket_name = 'party-assets'
+    # s3_bucket = S3Connection().get_bucket(bucket_name)
+    # count = 0
 
-    for key in s3_bucket.list():
-        count += 1
+    # for key in s3_bucket.list():
+    #     count += 1
 
-    print str(count) + ' photos inside ' + bucket_name
+    # print str(count) + ' photos inside ' + bucket_name
+    count = 55  # AWS Trial ran out, just use static assets
     return count
 
 def upload_photo_to_s3(fileName, image_contents):

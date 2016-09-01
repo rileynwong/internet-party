@@ -106,7 +106,8 @@ function init() {
 
     // Picture boxes
     addFillerBoxes();
-    addExistingBoxesFromServer();
+    // addExistingBoxesFromServer();
+    addStaticBoxes();
 
     window.addEventListener( 'resize', onWindowResize, false );
 }
@@ -118,6 +119,18 @@ function addFillerBoxes() {
     var material = new THREE.MeshBasicMaterial( { map: texture } );
 
     for ( var i = 0; i < numFillerPhotos; i++ ) {
+        addBox(material);
+    }
+}
+
+function addStaticBoxes() {
+    for (var i = 1; i <= 55; i++) {
+        paddedNumString = pad(i, 4)
+        var photoFileName = 'photo_' + paddedNumString + '.jpg'
+        var texture = THREE.ImageUtils.loadTexture( 'static/assets/photos/' + photoFileName );
+
+        texture.minFilter = THREE.NearestFilter;
+        var material = new THREE.MeshBasicMaterial( { map: texture } );
         addBox(material);
     }
 }

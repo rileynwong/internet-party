@@ -11,4 +11,4 @@ THREE.ImageUtils.crossOrigin = '';
 init();
 animate();
 
-poll();
+// poll();
