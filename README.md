@@ -2,7 +2,11 @@
 come play! live demo [here](https://internet-party.herokuapp.com/)  
 (it is quite fun on mobile)
 
-![internet party pic](http://i.imgur.com/zboa1Ls.jpg?1) ![internet party pic2](http://i.imgur.com/0NKhKgE.jpg)
+## tech stack
+- 3d gallery rendered with three.js
+- back-end written with Python Flask
+- assets served from and uploaded to Amazon Web Services S3
+- multimedia messages handled with Twilio API
 
 ## usage
 text (706) 956-5023 with a picture message to upload an image to the 3d gallery
@@ -14,8 +18,5 @@ scroll to zoom in and out
 ## pix
 ![internet party demo 1](http://i.imgur.com/tNJZWlK.png)
 ![internet party demo 2](http://i.imgur.com/NDoa6oj.png)
-
-## tech stack
-- 3d gallery rendered with three.js
-- server side code written with python [flask](http://flask.pocoo.org/)
-- assets served from and uploaded to aws s3
+![internet party pic](http://i.imgur.com/zboa1Ls.jpg?1) 
+![internet party pic2](http://i.imgur.com/0NKhKgE.jpg)
